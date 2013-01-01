@@ -50,6 +50,4 @@ typedef struct {
 
 extern volatile EncodeursValues encodeurs;
 
-extern int i2cAddress;
-
 #endif /* DEFINE_H_ */

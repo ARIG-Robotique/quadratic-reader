@@ -1,5 +1,5 @@
-
 #include <Arduino.h>
+#include <Wire.h>
 #include "define.h"
 
 
@@ -9,9 +9,6 @@ void loop();
 
 // Compteurs pour l'encodeur
 volatile EncodeursValues encodeurs;
-
-// Valeur de l'adresse pour l'I2C
-int i2cAdress;
 
 // Fonction principale, point d'entrée
 int main(void) {
@@ -30,16 +27,31 @@ int main(void) {
 // Fonction d'intérruption pour le comptage
 void chaRead() {
 	int valA = digitalRead(CHA);
+	int valB = digitalRead(CHB);
+
 	if (valA == HIGH) {
+		// Front montant de CHA
 
 	} else {
-
+		// Front descendant de CHA
 	}
 }
 void chbRead() {
+	int valA = digitalRead(CHA);
+	int valB = digitalRead(CHB);
 
+	if (valB == HIGH) {
+		// Front montant de CHB
+
+	} else {
+		// Front descendant de CHB
+
+	}
 }
 
+void resetEncodeursValues() {
+
+}
 
 // The setup() method runs once, when the sketch starts
 void setup() {
@@ -78,13 +90,21 @@ void setup() {
 		Serial.print(" - External INT [OK] (Mode : ");
 		Serial.print(externalIntType);
 		Serial.print(" ; CHB : ");
-		Serial.println(withChb);
+		Serial.print(withChb);
+		Serial.println(")");
 	}
 
 	// Configuration du bus I2C
 	int valAdd1 = digitalRead(ADD1);
 	int valAdd2 = digitalRead(ADD2);
+	int i2cAddress = BASE_ADD_I2C + (valAdd2 << 2) + (valAdd1 << 1);
 
+	Wire.begin(i2cAddress);
+	if (DEBUG_MODE == 1) {
+		Serial.print(" - I2C [OK] (Addresse : ");
+		Serial.print(i2cAddress);
+		Serial.println(")");
+	}
 }
 
 // the loop() method runs over and over again, as long as the Arduino has power
