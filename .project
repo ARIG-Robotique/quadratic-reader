@@ -3,6 +3,7 @@
 	<name>quadratic-reader</name>
 	<comment></comment>
 	<projects>
+		<project>arduino-core-standard</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
