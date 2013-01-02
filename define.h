@@ -8,6 +8,8 @@
 #ifndef DEFINE_H_
 #define DEFINE_H_
 
+#define VERSION			1
+
 // Mode debug : 1 => ON ; 0 => OFF
 #define DEBUG_MODE 		1
 
@@ -39,6 +41,7 @@
 // Action depuis le bus I2C
 #define CMD_RESET		'r'
 #define CMD_LECTURE		'l'
+#define CMD_VERSION		'v'
 
 // Structures pour la gestion des encodeurs
 typedef struct {

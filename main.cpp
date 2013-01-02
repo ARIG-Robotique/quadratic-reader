@@ -3,7 +3,6 @@
 
 #include "define.h"
 
-
 // Prototype des fonctions
 void setup();
 void loop();
@@ -11,11 +10,13 @@ void resetEncodeursValues();
 void sendEncodeursValues();
 
 void i2cReceive(int);
+void i2cRequest();
 void chaRead();
 void chbRead();
 
 // Compteurs pour l'encodeur
 volatile EncodeursValues encodeurs;
+volatile bool commutCounter;
 
 // Command reçu par l'I2C
 volatile char i2cCommand;
@@ -87,6 +88,7 @@ void setup() {
 	i2cCommand = 0;
 	Wire.begin(i2cAddress);
 	Wire.onReceive(i2cReceive);
+	Wire.onRequest(i2cRequest);
 	if (DEBUG_MODE == 1) {
 		Serial.print(" - I2C [OK] (Addresse : ");
 		Serial.print(i2cAddress);
@@ -98,20 +100,15 @@ void setup() {
 
 // Méthode appelé encore et encore, tant que la carte reste alimenté.
 void loop() {
+	// Gestion des commande ne devant rien renvoyé
 	if (i2cCommand != 0) {
-		i2cCommand = 0;
-
 		switch (i2cCommand) {
 			case CMD_RESET:
 				resetEncodeursValues();
 				break;
-
-			case CMD_LECTURE:
-				sendEncodeursValues();
-				break;
-			default:
-				break;
 		}
+
+		i2cCommand = 0; // reset de la commande
 	}
 }
 
@@ -126,9 +123,18 @@ void chaRead() {
 
 	if (valA == HIGH) {
 		// Front montant de CHA
-
+		if (commutCounter) {
+			encodeurs.nbEncochesRealA += (valB == LOW) ? 1 : -1;
+		} else {
+			encodeurs.nbEncochesRealB += (valB == LOW) ? 1 : -1;
+		}
 	} else {
 		// Front descendant de CHA
+		if (commutCounter) {
+			encodeurs.nbEncochesRealA += (valB == HIGH) ? 1 : -1;
+		} else {
+			encodeurs.nbEncochesRealB += (valB == HIGH) ? 1 : -1;
+		}
 	}
 }
 
@@ -139,10 +145,18 @@ void chbRead() {
 
 	if (valB == HIGH) {
 		// Front montant de CHB
-
+		if (commutCounter) {
+			encodeurs.nbEncochesRealA += (valA == HIGH) ? 1 : -1;
+		} else {
+			encodeurs.nbEncochesRealB += (valA == HIGH) ? 1 : -1;
+		}
 	} else {
 		// Front descendant de CHB
-
+		if (commutCounter) {
+			encodeurs.nbEncochesRealA += (valA == LOW) ? 1 : -1;
+		} else {
+			encodeurs.nbEncochesRealB += (valA == LOW) ? 1 : -1;
+		}
 	}
 }
 
@@ -157,18 +171,55 @@ void i2cReceive(int howMany) {
 	}
 }
 
+// Fonction de traitement des envoi au maitre.
+// La commande est sétter avant par le maitre.
+void i2cRequest() {
+	switch (i2cCommand) {
+		case CMD_LECTURE :
+			sendEncodeursValues();
+			break;
+		case CMD_VERSION :
+			Wire.write(VERSION);
+			break;
+	}
+
+	i2cCommand = 0; // Reset de la commande
+}
+
 // ------------------------------------------------------- //
 // -------------------- BUSINESS METHODS ----------------- //
 // ------------------------------------------------------- //
 
 // Réinitialisation des valeurs de comptage
 void resetEncodeursValues() {
+	noInterrupts();
+	commutCounter = false;
 	encodeurs.nbEncochesRealA = 0;
 	encodeurs.nbEncochesRealB = 0;
+	interrupts();
 }
 
 // Gestion de l'envoi des valeurs de comptage.
 // Gère également un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
 void sendEncodeursValues() {
-	// TODO : Envoyer la valeur du codeur sur le bus I2C
+	signed int value;
+	if (commutCounter) {
+		commutCounter = false;
+		value = encodeurs.nbEncochesRealB;
+		encodeurs.nbEncochesRealB = 0;
+	} else {
+		commutCounter = true;
+		value = encodeurs.nbEncochesRealA;
+		encodeurs.nbEncochesRealA = 0;
+	}
+
+	if (DEBUG_MODE == 1) {
+		Serial.print("Valeur codeur : ");
+		Serial.println(value);
+	}
+
+	for (int cpt = 0 ; cpt < 2 ; cpt++) {
+		Wire.write(value & 0xFF);
+		value = value >> 8;
+	}
 }
