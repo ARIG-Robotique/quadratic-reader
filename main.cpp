@@ -1,16 +1,30 @@
 #include <Arduino.h>
 #include <Wire.h>
+
 #include "define.h"
 
 
-// Prototype
+// Prototype des fonctions
 void setup();
 void loop();
+void resetEncodeursValues();
+void sendEncodeursValues();
+
+void i2cReceive(int);
+void chaRead();
+void chbRead();
 
 // Compteurs pour l'encodeur
 volatile EncodeursValues encodeurs;
 
-// Fonction principale, point d'entrée
+// Command reçu par l'I2C
+volatile char i2cCommand;
+
+// ------------------------------------------------------- //
+// ------------------------- MAIN ------------------------ //
+// ------------------------------------------------------- //
+
+// Point d'entrée du programme
 int main(void) {
 	// Initialisation du SDK Arduino. A réécrire si on veut customisé tout le bouzin.
 	init();
@@ -24,36 +38,7 @@ int main(void) {
 	}
 }
 
-// Fonction d'intérruption pour le comptage
-void chaRead() {
-	int valA = digitalRead(CHA);
-	int valB = digitalRead(CHB);
-
-	if (valA == HIGH) {
-		// Front montant de CHA
-
-	} else {
-		// Front descendant de CHA
-	}
-}
-void chbRead() {
-	int valA = digitalRead(CHA);
-	int valB = digitalRead(CHB);
-
-	if (valB == HIGH) {
-		// Front montant de CHB
-
-	} else {
-		// Front descendant de CHB
-
-	}
-}
-
-void resetEncodeursValues() {
-
-}
-
-// The setup() method runs once, when the sketch starts
+// Method de configuration pour le fonctionnement du programme
 void setup() {
 	// Initialisation du port série en debug seulement (cf define.h)
 	if (DEBUG_MODE == 1) {
@@ -99,14 +84,91 @@ void setup() {
 	int valAdd2 = digitalRead(ADD2);
 	int i2cAddress = BASE_ADD_I2C + (valAdd2 << 2) + (valAdd1 << 1);
 
+	i2cCommand = 0;
 	Wire.begin(i2cAddress);
+	Wire.onReceive(i2cReceive);
 	if (DEBUG_MODE == 1) {
 		Serial.print(" - I2C [OK] (Addresse : ");
 		Serial.print(i2cAddress);
 		Serial.println(")");
 	}
+
+	resetEncodeursValues();
 }
 
-// the loop() method runs over and over again, as long as the Arduino has power
+// Méthode appelé encore et encore, tant que la carte reste alimenté.
 void loop() {
+	if (i2cCommand != 0) {
+		i2cCommand = 0;
+
+		switch (i2cCommand) {
+			case CMD_RESET:
+				resetEncodeursValues();
+				break;
+
+			case CMD_LECTURE:
+				sendEncodeursValues();
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+// ------------------------------------------------------- //
+// ------------ SOUS PROGRAMMES D'INTERRUPTION ----------- //
+// ------------------------------------------------------- //
+
+// Fonction d'intérruption pour le comptage sur les infos du canal A
+void chaRead() {
+	int valA = digitalRead(CHA);
+	int valB = digitalRead(CHB);
+
+	if (valA == HIGH) {
+		// Front montant de CHA
+
+	} else {
+		// Front descendant de CHA
+	}
+}
+
+// Fonction d'intérruption pour le comptage sur les infos du canal B
+void chbRead() {
+	int valA = digitalRead(CHA);
+	int valB = digitalRead(CHB);
+
+	if (valB == HIGH) {
+		// Front montant de CHB
+
+	} else {
+		// Front descendant de CHB
+
+	}
+}
+
+// Fonction de gestion de la réception des commande I2C
+//
+// /!\ Si ça merde optimiser ça avec une lecture hors du sous prog d'intérruption
+//
+void i2cReceive(int howMany) {
+	while (Wire.available()) {
+		// Lecture de la commande
+		i2cCommand = Wire.read();
+	}
+}
+
+// ------------------------------------------------------- //
+// -------------------- BUSINESS METHODS ----------------- //
+// ------------------------------------------------------- //
+
+// Réinitialisation des valeurs de comptage
+void resetEncodeursValues() {
+	encodeurs.nbEncochesRealA = 0;
+	encodeurs.nbEncochesRealB = 0;
+}
+
+// Gestion de l'envoi des valeurs de comptage.
+// Gère également un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
+void sendEncodeursValues() {
+	// TODO : Envoyer la valeur du codeur sur le bus I2C
 }

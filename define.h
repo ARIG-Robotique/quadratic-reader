@@ -8,8 +8,6 @@
 #ifndef DEFINE_H_
 #define DEFINE_H_
 
-#include <Arduino.h>
-
 // Mode debug : 1 => ON ; 0 => OFF
 #define DEBUG_MODE 		1
 
@@ -39,8 +37,8 @@
 #define EXT_INT_CHB		1 // EXT Int 1
 
 // Action depuis le bus I2C
-#define RESET			'r'
-#define LECTURE			'l'
+#define CMD_RESET		'r'
+#define CMD_LECTURE		'l'
 
 // Structures pour la gestion des encodeurs
 typedef struct {
