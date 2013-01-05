@@ -218,7 +218,8 @@ void sendEncodeursValues() {
 		Serial.println(value);
 	}
 
-	for (int cpt = 0 ; cpt < 2 ; cpt++) {
+	// Envoi de la valeur sur 4 octets
+	for (int cpt = 0 ; cpt < 4 ; cpt++) {
 		Wire.write(value & 0xFF);
 		value = value >> 8;
 	}
