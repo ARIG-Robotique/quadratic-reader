@@ -34,7 +34,7 @@ int main(void) {
 	setup();
 
 	while(true) {
-		// Boucle ifinie pour le fonctionnement.
+		// Boucle infinie pour le fonctionnement.
 		loop();
 	}
 }
@@ -100,8 +100,9 @@ void setup() {
 
 // Méthode appelé encore et encore, tant que la carte reste alimenté.
 void loop() {
-	// Gestion des commande ne devant rien renvoyé
-	if (i2cCommand != 0) {
+	// Gestion des commande ne devant rien renvoyé.
+	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle traité ici.
+	if (i2cCommand == CMD_RESET) {
 		switch (i2cCommand) {
 			case CMD_RESET:
 				resetEncodeursValues();
@@ -160,7 +161,7 @@ void chbRead() {
 	}
 }
 
-// Fonction de gestion de la réception des commande I2C
+// Fonction de gestion de la réception des commandes I2C
 //
 // /!\ Si ça merde optimiser ça avec une lecture hors du sous prog d'intérruption
 //
@@ -172,14 +173,17 @@ void i2cReceive(int howMany) {
 }
 
 // Fonction de traitement des envoi au maitre.
-// La commande est sétter avant par le maitre.
+// La commande est setter avant par le maitre.
 void i2cRequest() {
+	// Si le maitre fait une demande d'info, c'est fait ici.
 	switch (i2cCommand) {
 		case CMD_LECTURE :
+			// Envoi de la valeur sur 4 octets
 			sendEncodeursValues();
 			break;
 		case CMD_VERSION :
-			Wire.write(VERSION);
+			// Envoi de la version sur un octet
+			Wire.write((char) VERSION);
 			break;
 	}
 

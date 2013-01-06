@@ -33,7 +33,10 @@
 								<option id="de.innot.avreclipse.compiler.option.debug.level.711681182" name="Generate Debugging Info" superClass="de.innot.avreclipse.compiler.option.debug.level" value="de.innot.avreclipse.compiler.option.debug.level.none" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.optimize.275175057" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.361632590" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/arduino-core-standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/arduino-core}&quot;"/>
+								</option>
+								<option id="de.innot.avreclipse.compiler.option.def.1048771632" name="Define Syms (-D)" superClass="de.innot.avreclipse.compiler.option.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="__ARDUINO_STANDARD=1"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.1424060311" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -41,14 +44,17 @@
 								<option id="de.innot.avreclipse.cppcompiler.option.debug.level.208997211" name="Generate Debugging Info" superClass="de.innot.avreclipse.cppcompiler.option.debug.level" value="de.innot.avreclipse.cppcompiler.option.debug.level.none" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.20469043" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize" value="de.innot.avreclipse.cppcompiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.incpath.1884659934" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/arduino-core-standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/arduino-core}&quot;"/>
+								</option>
+								<option id="de.innot.avreclipse.cppcompiler.option.def.353183759" name="Define Syms (-D)" superClass="de.innot.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="__ARDUINO_STANDARD=1"/>
 								</option>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.107282071" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1557981853" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release"/>
 							<tool id="de.innot.avreclipse.tool.cpplinker.app.release.1630203295" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.release">
 								<option id="de.innot.avreclipse.cpplinker.option.libpath.526036900" name="Libraries Path (-L)" superClass="de.innot.avreclipse.cpplinker.option.libpath" valueType="stringList">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/arduino-core-standard/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/arduino-core/Release Standard}&quot;"/>
 								</option>
 								<option id="de.innot.avreclipse.cpplinker.option.libs.1018060130" name="Libraries (-l)" superClass="de.innot.avreclipse.cpplinker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="arduino-core-standard"/>
@@ -85,5 +91,9 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/quadratic-reader"/>
+		</configuration>
+	</storageModule>
 </cproject>
