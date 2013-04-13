@@ -20,7 +20,9 @@ void chbRead();
 
 // Compteurs pour l'encodeur
 volatile EncodeursValues encodeurs;
-volatile bool commutCounter;
+
+// Booleen permettent de gérer la séquence des variables lors de l'envoi par I2C
+volatile bool commut;
 
 // Command reçu par l'I2C
 volatile char i2cCommand;
@@ -153,14 +155,14 @@ void chaRead() {
 
 	if (valA == HIGH) {
 		// Front montant de CHA
-		if (commutCounter) {
+		if (commut) {
 			encodeurs.nbEncochesRealA += (valB == LOW) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valB == LOW) ? 1 : -1;
 		}
 	} else {
 		// Front descendant de CHA
-		if (commutCounter) {
+		if (commut) {
 			encodeurs.nbEncochesRealA += (valB == HIGH) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valB == HIGH) ? 1 : -1;
@@ -175,14 +177,14 @@ void chbRead() {
 
 	if (valB == HIGH) {
 		// Front montant de CHB
-		if (commutCounter) {
+		if (commut) {
 			encodeurs.nbEncochesRealA += (valA == HIGH) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valA == HIGH) ? 1 : -1;
 		}
 	} else {
 		// Front descendant de CHB
-		if (commutCounter) {
+		if (commut) {
 			encodeurs.nbEncochesRealA += (valA == LOW) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valA == LOW) ? 1 : -1;
@@ -226,7 +228,7 @@ void i2cRequest() {
 // Réinitialisation des valeurs de comptage
 void resetEncodeursValues() {
 	noInterrupts();
-	commutCounter = false;
+	commut = false;
 	encodeurs.nbEncochesRealA = 0;
 	encodeurs.nbEncochesRealB = 0;
 
@@ -241,12 +243,12 @@ void resetEncodeursValues() {
 // Gère également un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
 void sendEncodeursValues() {
 	signed int value;
-	if (commutCounter) {
-		commutCounter = false;
+	if (commut) {
+		commut = false;
 		value = encodeurs.nbEncochesRealB;
 		encodeurs.nbEncochesRealB = 0;
 	} else {
-		commutCounter = true;
+		commut = true;
 		value = encodeurs.nbEncochesRealA;
 		encodeurs.nbEncochesRealA = 0;
 	}
