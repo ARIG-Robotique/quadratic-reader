@@ -189,7 +189,7 @@ void i2cRequest() {
 	// Si le maitre fait une demande d'info, c'est fait ici.
 	switch (i2cCommand) {
 		case CMD_LECTURE :
-			// Envoi de la valeur sur 4 octets
+			// Envoi de la valeur sur 2 octets (int sur 2 byte en AVR 8bits)
 			sendEncodeursValues();
 			break;
 		case CMD_VERSION :
@@ -238,9 +238,10 @@ void sendEncodeursValues() {
 	Serial.println(value);
 #endif
 
-	// Envoi de la valeur sur 4 octets
-	for (int cpt = 0 ; cpt < 4 ; cpt++) {
-		Wire.write(value & 0xFF);
-		value = value >> 8;
-	}
+	// Envoi de la valeur sur 2 octets
+	//
+	// /!\ Envoi du MSB au LSB car la lecture dŽcale a gauche
+	//
+	Wire.write(value >> 8);
+	Wire.write(value & 0xFF);
 }
