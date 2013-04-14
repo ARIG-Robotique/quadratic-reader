@@ -9,6 +9,7 @@ void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
 
+// Fonction d'IRQ
 void i2cReceive(int);
 void i2cRequest();
 void chaRead();
@@ -235,7 +236,7 @@ void sendEncodeursValues() {
 
 #ifdef DEBUG_MODE
 	Serial.print("Valeur codeur : ");
-	Serial.println(value);
+	Serial.println(value, DEC);
 #endif
 
 	// Envoi de la valeur sur 2 octets
