@@ -18,19 +18,19 @@ void chbRead();
 // Compteurs pour l'encodeur
 volatile EncodeursValues encodeurs;
 
-// Booleen permettent de gŽrer la sŽquence des variables lors de l'envoi par I2C
+// Booleen permettent de gÃ©rer la sÃ©quence des variables lors de l'envoi par I2C
 volatile bool commut;
 
-// Command reu par l'I2C
+// Command reÃ§u par l'I2C
 volatile char i2cCommand;
 
 // ------------------------------------------------------- //
 // ------------------------- MAIN ------------------------ //
 // ------------------------------------------------------- //
 
-// Point d'entrŽe du programme
+// Point d'entrÃ©e du programme
 int main(void) {
-	// Initialisation du SDK Arduino. A rŽŽcrire si on veut customisŽ tout le bouzin.
+	// Initialisation du SDK Arduino. A rÃ©Ã©crire si on veut customiser tout le bouzin.
 	init();
 
 	// Initialisation de l'application
@@ -45,7 +45,7 @@ int main(void) {
 // Method de configuration pour le fonctionnement du programme
 void setup() {
 	// ------------------------------------------------------------- //
-	// Initialisation du port sŽrie en debug seulement (cf define.h) //
+	// Initialisation du port sÃ©rie en debug seulement (cf define.h) //
 	// ------------------------------------------------------------- //
 #ifdef DEBUG_MODE
 	Serial.begin(115200);
@@ -53,7 +53,7 @@ void setup() {
 #endif
 
 	// ------------------------- //
-	// DŽfinition des broches IO //
+	// DÃ©finition des broches IO //
 	// ------------------------- //
 	pinMode(ADD1, INPUT);
 	pinMode(ADD2, INPUT);
@@ -66,7 +66,7 @@ void setup() {
 #endif
 
 	// -------------------------------------------------------- //
-	// DŽfinition des fonctions d'intŽrruption pour le comptage //
+	// DÃ©finition des fonctions d'intÃ©rruption pour le comptage //
 	// -------------------------------------------------------- //
 	int externalIntType = -1;
 	bool withChb = true;
@@ -106,14 +106,14 @@ void setup() {
 	Serial.println(")");
 #endif
 
-	// Initialisation des valeurs ˆ 0
+	// Initialisation des valeurs Ã  0
 	resetEncodeursValues();
 }
 
-// MŽthode appelŽ encore et encore, tant que la carte reste alimentŽ.
+// MÃ©thode appelÃ© encore et encore, tant que la carte reste alimentÃ©.
 void loop() {
-	// Gestion des commande ne devant rien renvoyŽ.
-	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionnŽ si elle traitŽ ici.
+	// Gestion des commande ne devant rien renvoyÃ©.
+	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionnÃ© si elle est traitÃ© ici.
 	if (i2cCommand == CMD_RESET) {
 		switch (i2cCommand) {
 			case CMD_RESET:
@@ -129,7 +129,7 @@ void loop() {
 // ------------ SOUS PROGRAMMES D'INTERRUPTION ----------- //
 // ------------------------------------------------------- //
 
-// Fonction d'intŽrruption pour le comptage sur les infos du canal A
+// Fonction d'intÃ©rruption pour le comptage sur les infos du canal A
 void chaRead() {
 	int valA = digitalRead(CHA);
 	int valB = digitalRead(CHB);
@@ -151,7 +151,7 @@ void chaRead() {
 	}
 }
 
-// Fonction d'intŽrruption pour le comptage sur les infos du canal B
+// Fonction d'intÃ©rruption pour le comptage sur les infos du canal B
 void chbRead() {
 	int valA = digitalRead(CHA);
 	int valB = digitalRead(CHB);
@@ -173,9 +173,9 @@ void chbRead() {
 	}
 }
 
-// Fonction de gestion de la rŽception des commandes I2C
+// Fonction de gestion de la rÃ©ception des commandes I2C
 //
-// /!\ Si a merde optimiser a avec une lecture hors du sous prog d'intŽrruption
+// /!\ Si Ã§a merde optimiser Ã§a avec une lecture hors du sous prog d'intÃ©rruption
 //
 void i2cReceive(int howMany) {
 	while (Wire.available()) {
@@ -184,7 +184,7 @@ void i2cReceive(int howMany) {
 	}
 }
 
-// Fonction de traitement des envoi au maitre.
+// Fonction de traitement des envois au maitre.
 // La commande est setter avant par le maitre.
 void i2cRequest() {
 	// Si le maitre fait une demande d'info, c'est fait ici.
@@ -206,7 +206,7 @@ void i2cRequest() {
 // -------------------- BUSINESS METHODS ----------------- //
 // ------------------------------------------------------- //
 
-// RŽinitialisation des valeurs de comptage
+// RÃ©initialisation des valeurs de comptage
 void resetEncodeursValues() {
 	noInterrupts();
 	commut = false;
@@ -214,14 +214,14 @@ void resetEncodeursValues() {
 	encodeurs.nbEncochesRealB = 0;
 
 #ifdef DEBUG_MODE
-	Serial.println("Initialisation des valeurs codeurs ˆ 0.");
+	Serial.println("Initialisation des valeurs codeurs ï¿½ 0.");
 #endif
 
 	interrupts();
 }
 
 // Gestion de l'envoi des valeurs de comptage.
-// Gre Žgalement un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
+// GÃ¨re Ã©galement un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
 void sendEncodeursValues() {
 	signed int value;
 	if (commut) {
@@ -241,7 +241,7 @@ void sendEncodeursValues() {
 
 	// Envoi de la valeur sur 2 octets
 	//
-	// /!\ Envoi du MSB au LSB car la lecture dŽcale a gauche
+	// /!\ Envoi du MSB au LSB car la lecture dÃ©cale a gauche
 	//
 	Wire.write(value >> 8);
 	Wire.write(value & 0xFF);

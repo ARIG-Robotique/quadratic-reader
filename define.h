@@ -25,16 +25,16 @@
 // Addresse de base sur le bus I2C
 #define BASE_ADD_I2C 	0xB0
 
-// Bit permettant de déterminer la partie variable de l'adresse I2C
+// Bit permettant de d√©terminer la partie variable de l'adresse I2C
 #define ADD1			A7 // Analog 7
 #define ADD2			A6 // Analog 6
 
-// Broche permettant de récupérer les informations du codeurs
+// Broche permettant de r√©cup√©rer les informations du codeurs
 #define CHA				2 // Digital 2
 #define CHB				3 // Digital 3
 #define IDX				4 // Digital 4
 
-// Numéro intérruption externe
+// Num√©ro int√©rruption externe
 #define EXT_INT_CHA		0 // EXT Int 0
 #define EXT_INT_CHB		1 // EXT Int 1
 
