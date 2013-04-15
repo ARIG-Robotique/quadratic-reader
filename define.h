@@ -25,11 +25,11 @@
 // Addresse de base sur le bus I2C
 #define BASE_ADD_I2C 	0xB0
 
-// Bit permettant de déterminer la partie variable de l'adresse I2C
+// Bit permettant de d√©terminer la partie variable de l'adresse I2C
 #define ADD1			A7 // Analog 7
 #define ADD2			A6 // Analog 6
 
-// Broche permettant de récupérer les informations du codeurs
+// Broche permettant de r√©cup√©rer les informations du codeurs
 #define CHA				2 // Digital 2
 #define CHB				3 // Digital 3
 #define IDX				4 // Digital 4
@@ -46,7 +46,7 @@
 #define DIR_SORTIR		LOW // Sens de rotatio du moteur pour sortir
 #define DIR_RENTRER		HIGH // Sens de rotatio du moteur pour rentrer
 
-// Numéro intérruption externe
+// Num√©ro int√©rruption externe
 #define EXT_INT_CHA		0 // EXT Int 0
 #define EXT_INT_CHB		1 // EXT Int 1
 
@@ -56,7 +56,7 @@
 #define CMD_BRAS_CDX	'b'
 #define CMD_VERSION		'v'
 
-// Constantes de séquence pour le mouvement du bras
+// Constantes de s√©quence pour le mouvement du bras
 #define MVT_STOP		0
 #define MVT_SORTIR		1
 #define MVT_RENTRER		2
