@@ -8,6 +8,7 @@ void setup();
 void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
+void readConfiguration();
 
 // Fonction d'IRQ
 void i2cReceive(int);
@@ -108,16 +109,22 @@ void setup() {
 
 	// Initialisation des valeurs à 0
 	resetEncodeursValues();
+
+	// Configuration par défaut
+	invert = false;
 }
 
 // Méthode appelé encore et encore, tant que la carte reste alimenté.
 void loop() {
 	// Gestion des commande ne devant rien renvoyé.
 	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle est traité ici.
-	if (i2cCommand == CMD_RESET) {
+	if (i2cCommand == CMD_RESET || i2cCommand == CMD_SETUP) {
 		switch (i2cCommand) {
 			case CMD_RESET:
 				resetEncodeursValues();
+				break;
+			case CMD_SETUP:
+				readConfiguration();
 				break;
 		}
 
@@ -234,8 +241,15 @@ void sendEncodeursValues() {
 		encodeurs.nbEncochesRealA = 0;
 	}
 
+	// Application du coëficient si configuré
+	if (invert) {
+		value *= -1;
+	}
+
 #ifdef DEBUG_MODE
-	Serial.print("Valeur codeur : ");
+	Serial.print("Valeur codeur (invert : ");
+	Serial.print(invert, HEX);
+	Serial.print(") : ");
 	Serial.println(value, DEC);
 #endif
 
@@ -245,4 +259,27 @@ void sendEncodeursValues() {
 	//
 	Wire.write(value >> 8);
 	Wire.write(value & 0xFF);
+}
+
+/*
+ * Cette fonction est en charge de lire les paramètres de configuration et de les enregistrer.
+ */
+void readConfiguration() {
+#ifdef DEBUG_MODE
+	Serial.print(" * Lecture des paramètres de configuration");
+#endif
+
+	// Lecture des infos I2C
+	while (Wire.available()) {
+		char param = Wire.read();
+		switch (param) {
+			case PARAM_INVERT :
+				invert = Wire.read() == 1;
+#ifdef DEBUG_MODE
+	Serial.print("   - Configuration de l'invertion : ");
+	Serial.println(invert, BIN);
+#endif
+				break;
+		}
+	}
 }
