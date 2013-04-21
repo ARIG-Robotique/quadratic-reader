@@ -325,6 +325,15 @@ void sortirBras() {
 	analogWrite(MOT_PWM, 64);
 }
 
+/**
+ * Rentrer le bras pour ne pas accrocher le reste sur la table
+ */
+void rentrerBras() {
+	digitalWrite(MOT_BRAKE, LOW);
+	digitalWrite(MOT_DIR, DIR_RENTRER);
+	analogWrite(MOT_PWM, 64);
+}
+
 /*
  * Cette fonction est en charge de lire les paramètres de configuration et de les enregistrer.
  */
@@ -346,13 +355,4 @@ void readConfiguration() {
 				break;
 		}
 	}
-}
-
-/**
- * Rentrer le bras pour ne pas accrocher le reste sur la table
- */
-void rentrerBras() {
-	digitalWrite(MOT_BRAKE, LOW);
-	digitalWrite(MOT_DIR, DIR_RENTRER);
-	analogWrite(MOT_PWM, 64);
 }
