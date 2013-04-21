@@ -53,6 +53,7 @@
 // Action depuis le bus I2C
 #define CMD_RESET		'r'
 #define CMD_LECTURE		'l'
+#define CMD_SETUP		's'
 #define CMD_BRAS_CDX	'b'
 #define CMD_VERSION		'v'
 
@@ -60,6 +61,10 @@
 #define MVT_STOP		0
 #define MVT_SORTIR		1
 #define MVT_RENTRER		2
+
+// Paramètre de configuration
+#define PARAM_INVERT 	'I'
+boolean invert;
 
 // Structures pour la gestion des encodeurs
 typedef struct {

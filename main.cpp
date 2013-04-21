@@ -8,6 +8,7 @@ void setup();
 void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
+void readConfiguration();
 void mouvementCadeaux();
 void stopMoteur();
 void sortirBras();
@@ -120,6 +121,9 @@ void setup() {
 	// Initialisation des valeurs à 0
 	resetEncodeursValues();
 
+	// Configuration par défaut
+	invert = false;
+
 	// Arret du moteur
 	stopMoteur();
 }
@@ -128,13 +132,16 @@ void setup() {
 void loop() {
 	// Gestion des commande ne devant rien renvoyer.
 	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle traité ici.
-	if (i2cCommand == CMD_RESET || i2cCommand == CMD_BRAS_CDX) {
+	if (i2cCommand == CMD_RESET || i2cCommand == CMD_BRAS_CDX || i2cCommand == CMD_SETUP) {
 		switch (i2cCommand) {
 			case CMD_RESET:
 				resetEncodeursValues();
 				break;
 			case CMD_BRAS_CDX:
 				stepMouvementCdx = MVT_SORTIR;
+				break;
+			case CMD_SETUP:
+				readConfiguration();
 				break;
 		}
 
@@ -204,7 +211,7 @@ void i2cReceive(int howMany) {
 	}
 }
 
-// Fonction de traitement des envoi au maitre.
+// Fonction de traitement des envois au maitre.
 // La commande est setter avant par le maitre.
 void i2cRequest() {
 	// Si le maitre fait une demande d'info, c'est fait ici.
@@ -254,8 +261,15 @@ void sendEncodeursValues() {
 		encodeurs.nbEncochesRealA = 0;
 	}
 
+	// Application du coëficient si configuré
+	if (invert) {
+		value *= -1;
+	}
+
 #ifdef DEBUG_MODE
-	Serial.print("Valeur codeur : ");
+	Serial.print("Valeur codeur (invert : ");
+	Serial.print(invert, HEX);
+	Serial.print(") : ");
 	Serial.println(value, DEC);
 #endif
 
@@ -309,6 +323,29 @@ void sortirBras() {
 	digitalWrite(MOT_BRAKE, LOW);
 	digitalWrite(MOT_DIR, DIR_SORTIR);
 	analogWrite(MOT_PWM, 64);
+}
+
+/*
+ * Cette fonction est en charge de lire les paramètres de configuration et de les enregistrer.
+ */
+void readConfiguration() {
+#ifdef DEBUG_MODE
+	Serial.print(" * Lecture des paramètres de configuration");
+#endif
+
+	// Lecture des infos I2C
+	while (Wire.available()) {
+		char param = Wire.read();
+		switch (param) {
+			case PARAM_INVERT :
+				invert = Wire.read() == 1;
+#ifdef DEBUG_MODE
+	Serial.print("   - Configuration de l'invertion : ");
+	Serial.println(invert, BIN);
+#endif
+				break;
+		}
+	}
 }
 
 /**
