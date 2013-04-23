@@ -95,7 +95,7 @@ void setup() {
 
 #ifdef DEBUG_MODE
 	Serial.print(" - External INT [OK] (Mode : ");
-	Serial.print(externalIntType);
+	Serial.print(externalIntType, DEC);
 	Serial.print(" ; CHB : ");
 	Serial.print(withChb);
 	Serial.println(")");
@@ -114,7 +114,7 @@ void setup() {
 	Wire.onRequest(i2cRequest);
 #ifdef DEBUG_MODE
 	Serial.print(" - I2C [OK] (Addresse : ");
-	Serial.print(i2cAddress);
+	Serial.print(i2cAddress, HEX);
 	Serial.println(")");
 #endif
 
