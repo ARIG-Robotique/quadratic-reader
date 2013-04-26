@@ -9,6 +9,7 @@ void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
 void readConfiguration();
+void heartBeat();
 
 // Fonction d'IRQ
 void i2cReceive(int);
@@ -25,6 +26,11 @@ volatile bool commut;
 // Command reçu par l'I2C
 volatile char i2cCommand;
 
+// Heartbeat variables
+int heartTimePrec;
+int heartTime;
+boolean heart;
+
 // ------------------------------------------------------- //
 // ------------------------- MAIN ------------------------ //
 // ------------------------------------------------------- //
@@ -38,6 +44,9 @@ int main(void) {
 	setup();
 
 	while(true) {
+		// Heart beat
+		heartBeat();
+
 		// Boucle infinie pour le fonctionnement.
 		loop();
 	}
@@ -56,6 +65,7 @@ void setup() {
 	// ------------------------- //
 	// Définition des broches IO //
 	// ------------------------- //
+	pinMode(LED_BUILTIN, OUTPUT);
 	pinMode(ADD1, INPUT);
 	pinMode(ADD2, INPUT);
 	pinMode(CHA, INPUT);
@@ -112,6 +122,8 @@ void setup() {
 
 	// Configuration par défaut
 	invert = false;
+	heartTime = heartTimePrec = millis();
+	heart = false;
 }
 
 // Méthode appelé encore et encore, tant que la carte reste alimenté.
@@ -212,6 +224,18 @@ void i2cRequest() {
 // ------------------------------------------------------- //
 // -------------------- BUSINESS METHODS ----------------- //
 // ------------------------------------------------------- //
+
+/*
+ * Méthode pour le battement de coeur
+ */
+void heartBeat() {
+	heartTime = millis();
+	if (heartTime - heartTimePrec > 1000) {
+		heartTimePrec = heartTime;
+		digitalWrite(LED_BUILTIN, (heart) ? HIGH : LOW);
+		heart = !heart;
+	}
+}
 
 // Réinitialisation des valeurs de comptage
 void resetEncodeursValues() {
