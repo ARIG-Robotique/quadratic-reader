@@ -239,7 +239,6 @@ void heartBeat() {
 
 // Réinitialisation des valeurs de comptage
 void resetEncodeursValues() {
-	noInterrupts();
 	commut = false;
 	encodeurs.nbEncochesRealA = 0;
 	encodeurs.nbEncochesRealB = 0;
@@ -247,8 +246,6 @@ void resetEncodeursValues() {
 #ifdef DEBUG_MODE
 	Serial.println("Initialisation des valeurs codeurs a 0.");
 #endif
-
-	interrupts();
 }
 
 // Gestion de l'envoi des valeurs de comptage.
