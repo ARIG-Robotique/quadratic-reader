@@ -103,8 +103,8 @@ void setup() {
 	// ------------------------ //
 	// Configuration du bus I2C //
 	// ------------------------ //
-	int valAdd1 = digitalRead(ADD1);
-	int valAdd2 = digitalRead(ADD2);
+	int valAdd1 = (analogRead(ADD1) > 512) ? HIGH : LOW;
+	int valAdd2 = (analogRead(ADD2) > 512) ? HIGH : LOW;
 	int i2cAddress = BASE_ADD_I2C + (valAdd2 << 2) + (valAdd1 << 1);
 
 	i2cCommand = 0;
