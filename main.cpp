@@ -245,7 +245,7 @@ void resetEncodeursValues() {
 	encodeurs.nbEncochesRealB = 0;
 
 #ifdef DEBUG_MODE
-	Serial.println("Initialisation des valeurs codeurs � 0.");
+	Serial.println("Initialisation des valeurs codeurs a 0.");
 #endif
 
 	interrupts();
