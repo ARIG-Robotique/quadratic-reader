@@ -165,14 +165,14 @@ void chaRead() {
 
 	if (valA == HIGH) {
 		// Front montant de CHA
-		if (commut) {
+		if (!commut) {
 			encodeurs.nbEncochesRealA += (valB == LOW) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valB == LOW) ? 1 : -1;
 		}
 	} else {
 		// Front descendant de CHA
-		if (commut) {
+		if (!commut) {
 			encodeurs.nbEncochesRealA += (valB == HIGH) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valB == HIGH) ? 1 : -1;
@@ -187,14 +187,14 @@ void chbRead() {
 
 	if (valB == HIGH) {
 		// Front montant de CHB
-		if (commut) {
+		if (!commut) {
 			encodeurs.nbEncochesRealA += (valA == HIGH) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valA == HIGH) ? 1 : -1;
 		}
 	} else {
 		// Front descendant de CHB
-		if (commut) {
+		if (!commut) {
 			encodeurs.nbEncochesRealA += (valA == LOW) ? 1 : -1;
 		} else {
 			encodeurs.nbEncochesRealB += (valA == LOW) ? 1 : -1;
@@ -264,14 +264,13 @@ void resetEncodeursValues() {
 void sendEncodeursValues() {
 	signed int value;
 	if (commut) {
-		commut = false;
 		value = encodeurs.nbEncochesRealB;
 		encodeurs.nbEncochesRealB = 0;
 	} else {
-		commut = true;
 		value = encodeurs.nbEncochesRealA;
 		encodeurs.nbEncochesRealA = 0;
 	}
+	commut = !commut;
 
 	// Application du coëficient si configuré
 	if (invert) {
