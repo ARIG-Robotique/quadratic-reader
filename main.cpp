@@ -35,24 +35,9 @@ boolean heart;
 // ------------------------- MAIN ------------------------ //
 // ------------------------------------------------------- //
 
-// Point d'entrée du programme
-int main(void) {
-	// Initialisation du SDK Arduino. A réécrire si on veut customiser tout le bouzin.
-	init();
-
-	// Initialisation de l'application
-	setup();
-
-	while(true) {
-		// Heart beat
-		heartBeat();
-
-		// Boucle infinie pour le fonctionnement.
-		loop();
-	}
-}
-
-// Method de configuration pour le fonctionnement du programme
+/*
+ * Methode de configuration pour le fonctionnement du programme
+ */
 void setup() {
 	// ------------------------------------------------------------- //
 	// Initialisation du port série en debug seulement (cf define.h) //
@@ -126,7 +111,28 @@ void setup() {
 	heart = false;
 }
 
-// Méthode appelé encore et encore, tant que la carte reste alimenté.
+/*
+ * Fonction principale. Point d'entrée du programme
+ */
+int main(void) {
+	// Initialisation du SDK Arduino. A réécrire si on veut customiser tout le bouzin.
+	init();
+
+	// Initialisation de l'application
+	setup();
+
+	while(true) {
+		// Heart beat
+		heartBeat();
+
+		// Boucle infinie pour le fonctionnement.
+		loop();
+	}
+}
+
+/*
+ * Méthode appelé encore et encore, tant que la carte reste alimenté.
+ */
 void loop() {
 	// Gestion des commande ne devant rien renvoyé.
 	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle est traité ici.
