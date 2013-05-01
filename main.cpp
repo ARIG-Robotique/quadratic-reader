@@ -17,6 +17,9 @@ void i2cRequest();
 void chaRead();
 void chbRead();
 
+// Buffer d'envoi des valeur codeurs
+byte values[2];
+
 // Compteurs pour l'encodeur
 volatile EncodeursValues encodeurs;
 
@@ -283,9 +286,9 @@ void sendEncodeursValues() {
 	// Envoi de la valeur sur 2 octets
 	//
 	// /!\ Envoi du MSB au LSB car la lecture décale a gauche
-	//
-	Wire.write(value >> 8);
-	Wire.write(value & 0xFF);
+	values[0] = value >> 8;
+	values[1] = value & 0xFF;
+	Wire.write(values, 2);
 }
 
 /*
