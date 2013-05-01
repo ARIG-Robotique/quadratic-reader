@@ -27,7 +27,9 @@
 
 // Bit permettant de déterminer la partie variable de l'adresse I2C
 #define ADD1			A7 // Analog 7
-#define ADD2			A6 // Analog 6
+
+// Bit permettant d'indiquer que le sens de comptage est inversé
+#define INVERT			A6 // Analog 6
 
 // Broche permettant de récupérer les informations du codeurs
 #define CHA				2 // Digital 2
@@ -41,12 +43,7 @@
 // Action depuis le bus I2C
 #define CMD_RESET		'r'
 #define CMD_LECTURE		'l'
-#define CMD_SETUP		's'
 #define CMD_VERSION		'v'
-
-// Paramètre de configuration
-#define PARAM_INVERT 	'I'
-boolean invert;
 
 // Structures pour la gestion des encodeurs
 typedef struct {
@@ -55,5 +52,7 @@ typedef struct {
 } EncodeursValues;
 
 extern volatile EncodeursValues encodeurs;
+
+boolean invert;
 
 #endif /* DEFINE_H_ */

@@ -8,7 +8,6 @@ void setup();
 void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
-void readConfiguration();
 void heartBeat();
 
 // Fonction d'IRQ
@@ -54,8 +53,8 @@ void setup() {
 	// Définition des broches IO //
 	// ------------------------- //
 	pinMode(LED_BUILTIN, OUTPUT);
+	pinMode(INVERT, INPUT);
 	pinMode(ADD1, INPUT);
-	pinMode(ADD2, INPUT);
 	pinMode(CHA, INPUT);
 	pinMode(CHB, INPUT);
 	pinMode(IDX, INPUT);
@@ -92,8 +91,7 @@ void setup() {
 	// Configuration du bus I2C //
 	// ------------------------ //
 	int valAdd1 = (analogRead(ADD1) > 512) ? HIGH : LOW;
-	int valAdd2 = (analogRead(ADD2) > 512) ? HIGH : LOW;
-	int i2cAddress = BASE_ADD_I2C + (valAdd2 << 2) + (valAdd1 << 1);
+	int i2cAddress = BASE_ADD_I2C + (valAdd1 << 1);
 
 	i2cCommand = 0;
 	Wire.begin(i2cAddress);
@@ -105,11 +103,17 @@ void setup() {
 	Serial.println(")");
 #endif
 
+	invert = (analogRead(INVERT) > 512) ? true : false;
+#ifdef DEBUG_MODE
+	Serial.print(" - Invertion [OK] (Actif : ");
+	Serial.print(invert);
+	Serial.println(")");
+#endif
+
 	// Initialisation des valeurs à 0
 	resetEncodeursValues();
 
 	// Configuration par défaut
-	invert = false;
 	heartTime = heartTimePrec = millis();
 	heart = false;
 }
@@ -139,13 +143,10 @@ int main(void) {
 void loop() {
 	// Gestion des commande ne devant rien renvoyé.
 	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle est traité ici.
-	if (i2cCommand == CMD_RESET || i2cCommand == CMD_SETUP) {
+	if (i2cCommand == CMD_RESET) {
 		switch (i2cCommand) {
 			case CMD_RESET:
 				resetEncodeursValues();
-				break;
-			case CMD_SETUP:
-				readConfiguration();
 				break;
 		}
 
@@ -206,25 +207,16 @@ void chbRead() {
 // /!\ Si ça merde optimiser ça avec une lecture hors du sous prog d'intérruption
 //
 void i2cReceive(int howMany) {
-#ifdef DEBUG_MODE
-	Serial.print(" * Reception d'une commande : ");
-	Serial.print(howMany, DEC);
-	Serial.println(" byte(s)");
-#endif
-
 	while (Wire.available()) {
 		// Lecture de la commande
 		i2cCommand = Wire.read();
-#ifdef DEBUG_MODE
-	Serial.print(" ** Commande : ");
-	Serial.println((char) i2cCommand);
-#endif
 	}
 }
 
 // Fonction de traitement des envois au maitre.
 // La commande est setter avant par le maitre.
 void i2cRequest() {
+
 	// Si le maitre fait une demande d'info, c'est fait ici.
 	switch (i2cCommand) {
 		case CMD_LECTURE :
@@ -232,9 +224,6 @@ void i2cRequest() {
 			sendEncodeursValues();
 			break;
 		case CMD_VERSION :
-#ifdef DEBUG_MODE
-			Serial.println(" * Demande de la version de la carte codeur");
-#endif
 			// Envoi de la version sur un octet
 			Wire.write((char) VERSION);
 			break;
@@ -302,27 +291,4 @@ void sendEncodeursValues() {
 	values[0] = value >> 8;
 	values[1] = value & 0xFF;
 	Wire.write(values, 2);
-}
-
-/*
- * Cette fonction est en charge de lire les paramètres de configuration et de les enregistrer.
- */
-void readConfiguration() {
-#ifdef DEBUG_MODE
-	Serial.print(" * Lecture des paramètres de configuration");
-#endif
-
-	// Lecture des infos I2C
-	while (Wire.available()) {
-		char param = Wire.read();
-		switch (param) {
-			case PARAM_INVERT :
-				invert = Wire.read() == 1;
-#ifdef DEBUG_MODE
-	Serial.print("   - Configuration de l'invertion : ");
-	Serial.println(invert, BIN);
-#endif
-				break;
-		}
-	}
 }
