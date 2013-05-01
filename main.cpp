@@ -206,9 +206,19 @@ void chbRead() {
 // /!\ Si ça merde optimiser ça avec une lecture hors du sous prog d'intérruption
 //
 void i2cReceive(int howMany) {
+#ifdef DEBUG_MODE
+	Serial.print(" * Reception d'une commande : ");
+	Serial.print(howMany, DEC);
+	Serial.println(" byte(s)");
+#endif
+
 	while (Wire.available()) {
 		// Lecture de la commande
 		i2cCommand = Wire.read();
+#ifdef DEBUG_MODE
+	Serial.print(" ** Commande : ");
+	Serial.println((char) i2cCommand);
+#endif
 	}
 }
 
@@ -222,6 +232,9 @@ void i2cRequest() {
 			sendEncodeursValues();
 			break;
 		case CMD_VERSION :
+#ifdef DEBUG_MODE
+			Serial.println(" * Demande de la version de la carte codeur");
+#endif
 			// Envoi de la version sur un octet
 			Wire.write((char) VERSION);
 			break;
@@ -277,7 +290,7 @@ void sendEncodeursValues() {
 	}
 
 #ifdef DEBUG_MODE
-	Serial.print("Valeur codeur (invert : ");
+	Serial.print(" * Valeur codeur (invert : ");
 	Serial.print(invert, HEX);
 	Serial.print(") : ");
 	Serial.println(value, DEC);
