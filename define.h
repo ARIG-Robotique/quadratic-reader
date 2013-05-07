@@ -40,9 +40,16 @@
 #define EXT_INT_CHA		0 // EXT Int 0
 #define EXT_INT_CHB		1 // EXT Int 1
 
+// Numéro de la pin de la commande moteur
+#define PWM_MOT			11
+
+// Offset pour la valeur de la PWM
+#define PWM_OFFSET		127
+
 // Action depuis le bus I2C
 #define CMD_RESET		'r'
 #define CMD_LECTURE		'l'
+#define CMD_MOTEUR		'm'
 #define CMD_VERSION		'v'
 
 // Structures pour la gestion des encodeurs

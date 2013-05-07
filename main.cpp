@@ -53,6 +53,8 @@ void setup() {
 	// Définition des broches IO //
 	// ------------------------- //
 	pinMode(LED_BUILTIN, OUTPUT);
+	pinMode(PWM_MOT, OUTPUT);
+
 	pinMode(INVERT, INPUT);
 	pinMode(ADD1, INPUT);
 	pinMode(CHA, INPUT);
@@ -113,6 +115,9 @@ void setup() {
 	// Initialisation des valeurs à 0
 	resetEncodeursValues();
 
+	// Pas de PWM
+	generatePWM(0);
+
 	// Configuration par défaut
 	heartTime = heartTimePrec = millis();
 	heart = false;
@@ -143,7 +148,7 @@ int main(void) {
 void loop() {
 	// Gestion des commande ne devant rien renvoyé.
 	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle est traité ici.
-	if (i2cCommand == CMD_RESET) {
+	if (i2cCommand == CMD_RESET || i2cCommand == CMD_MOTEUR) {
 		switch (i2cCommand) {
 			case CMD_RESET:
 				resetEncodeursValues();
@@ -210,6 +215,10 @@ void i2cReceive(int howMany) {
 	while (Wire.available()) {
 		// Lecture de la commande
 		i2cCommand = Wire.read();
+
+		if (i2cCommand == CMD_MOTEUR) {
+			generatePWM(Wire.read());
+		}
 	}
 }
 
@@ -257,6 +266,11 @@ void resetEncodeursValues() {
 #ifdef DEBUG_MODE
 	Serial.println("Initialisation des valeurs codeurs a 0.");
 #endif
+}
+
+// Génération de la PWM
+void generatePWM(byte pwmVal) {
+	analogWrite(PWM_MOT, pwmVal + PWM_OFFSET);
 }
 
 // Gestion de l'envoi des valeurs de comptage.
