@@ -9,6 +9,7 @@ void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
 void heartBeat();
+void generatePWM(byte pwmVal);
 
 // Fonction d'IRQ
 void i2cReceive(int);
