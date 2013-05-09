@@ -216,7 +216,10 @@ void i2cReceive(int howMany) {
 	while (Wire.available()) {
 		// Lecture de la commande
 		i2cCommand = Wire.read();
-
+#ifdef DEBUG_MODE
+		Serial.print("Commande I2C : ");
+		Serial.println(i2cCommand);
+#endif
 		if (i2cCommand == CMD_MOTEUR) {
 			generatePWM(Wire.read());
 		}
@@ -271,6 +274,10 @@ void resetEncodeursValues() {
 
 // Génération de la PWM
 void generatePWM(byte pwmVal) {
+#ifdef DEBUG_MODE
+	Serial.print("PWM : ");
+	Serial.println(pwmVal, DEC);
+#endif
 	analogWrite(PWM_MOT, pwmVal + PWM_OFFSET);
 }
 
