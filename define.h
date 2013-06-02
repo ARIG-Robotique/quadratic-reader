@@ -20,7 +20,7 @@
 #define MULT_MODE_1X	1
 #define MULT_MODE_2X	2
 #define MULT_MODE_4X	4
-#define MULT_MODE_SEL	MULT_MODE_1X
+#define MULT_MODE_SEL	MULT_MODE_4X
 
 // Addresse de base sur le bus I2C
 #define BASE_ADD_I2C 	0xB0
