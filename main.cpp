@@ -134,6 +134,16 @@ int main(void) {
 
 		// Boucle infinie pour le fonctionnement.
 		loop();
+
+#ifdef DEBUG_MODE
+		if (Serial.available()) {
+			int cmdSerial = Serial.read();
+			switch (cmdSerial) {
+			case CMD_RESET : resetEncodeursValues();break;
+			case CMD_LECTURE : sendEncodeursValues();break;
+			}
+		}
+#endif
 	}
 }
 
