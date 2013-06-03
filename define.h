@@ -45,14 +45,10 @@
 #define CMD_LECTURE		'l'
 #define CMD_VERSION		'v'
 
-// Structures pour la gestion des encodeurs
-typedef struct {
-	signed int nbEncochesRealA;
-	signed int nbEncochesRealB;
-} EncodeursValues;
+// Stockage de la valeurs des pulses compté
+extern volatile signed int nbEncoches;
 
-extern volatile EncodeursValues encodeurs;
-
+// Pour la configuration de l'invertion des valeurs
 boolean invert;
 
 #endif /* DEFINE_H_ */

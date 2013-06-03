@@ -20,10 +20,7 @@ void chbRead();
 byte values[2];
 
 // Compteurs pour l'encodeur
-volatile EncodeursValues encodeurs;
-
-// Booleen permettent de gérer la séquence des variables lors de l'envoi par I2C
-volatile bool commut;
+volatile signed int nbEncoches;
 
 // Command reçu par l'I2C
 volatile char i2cCommand;
@@ -175,18 +172,10 @@ void chaRead() {
 
 	if (valA == HIGH) {
 		// Front montant de CHA
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valB == LOW) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valB == LOW) ? 1 : -1;
-		}
+		nbEncoches += (valB == LOW) ? 1 : -1;
 	} else {
 		// Front descendant de CHA
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valB == HIGH) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valB == HIGH) ? 1 : -1;
-		}
+		nbEncoches += (valB == HIGH) ? 1 : -1;
 	}
 }
 
@@ -197,18 +186,10 @@ void chbRead() {
 
 	if (valB == HIGH) {
 		// Front montant de CHB
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valA == HIGH) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valA == HIGH) ? 1 : -1;
-		}
+		nbEncoches += (valA == HIGH) ? 1 : -1;
 	} else {
 		// Front descendant de CHB
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valA == LOW) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valA == LOW) ? 1 : -1;
-		}
+		nbEncoches += (valA == LOW) ? 1 : -1;
 	}
 }
 
@@ -260,9 +241,7 @@ void heartBeat() {
 
 // Réinitialisation des valeurs de comptage
 void resetEncodeursValues() {
-	commut = false;
-	encodeurs.nbEncochesRealA = 0;
-	encodeurs.nbEncochesRealB = 0;
+	nbEncoches = 0;
 
 #ifdef DEBUG_MODE
 	Serial.println("Initialisation des valeurs codeurs a 0.");
@@ -272,15 +251,8 @@ void resetEncodeursValues() {
 // Gestion de l'envoi des valeurs de comptage.
 // Gère également un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
 void sendEncodeursValues() {
-	signed int value;
-	if (commut) {
-		value = encodeurs.nbEncochesRealB;
-		encodeurs.nbEncochesRealB = 0;
-	} else {
-		value = encodeurs.nbEncochesRealA;
-		encodeurs.nbEncochesRealA = 0;
-	}
-	commut = !commut;
+	signed int value = nbEncoches;
+	nbEncoches = 0;
 
 	// Application du coëficient si configuré
 	if (invert) {
