@@ -3,6 +3,9 @@
  *
  *  Created on: 1 janv. 2013
  *      Author: mythril
+ *
+ * /!\ La communication maitre n'est pas réalisé avec la lib Wire Arduino
+ *
  */
 
 #ifndef DEFINE_H_
