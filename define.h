@@ -3,9 +3,6 @@
  *
  *  Created on: 1 janv. 2013
  *      Author: mythril
- *
- * /!\ La communication maitre n'est pas réalisé avec la lib Wire Arduino
- *
  */
 
 #ifndef DEFINE_H_
@@ -43,10 +40,12 @@
 #define EXT_INT_CHA		0 // EXT Int 0
 #define EXT_INT_CHB		1 // EXT Int 1
 
-// Action depuis le bus I2C
+#ifdef DEBUG_MODE
+// Action depuis la liasison série
 #define CMD_RESET		'r'
 #define CMD_LECTURE		'l'
-#define CMD_VERSION		'v'
+
+#endif
 
 // Stockage de la valeurs des pulses compté
 extern volatile signed int nbEncoches;

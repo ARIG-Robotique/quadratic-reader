@@ -5,13 +5,11 @@
 
 // Prototype des fonctions
 void setup();
-void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
 void heartBeat();
 
 // Fonction d'IRQ
-void i2cReceive(int);
 void i2cRequest();
 void chaRead();
 void chbRead();
@@ -21,9 +19,6 @@ byte values[2];
 
 // Compteurs pour l'encodeur
 volatile signed int nbEncoches;
-
-// Command reçu par l'I2C
-volatile char i2cCommand;
 
 // Heartbeat variables
 int heartTimePrec;
@@ -90,9 +85,7 @@ void setup() {
 	int valAdd1 = (analogRead(ADD1) > 512) ? HIGH : LOW;
 	int i2cAddress = BASE_ADD_I2C + (valAdd1 << 1);
 
-	i2cCommand = 0;
 	Wire.begin(i2cAddress);
-	Wire.onReceive(i2cReceive);
 	Wire.onRequest(i2cRequest);
 #ifdef DEBUG_MODE
 	Serial.print(" - I2C [OK] (Addresse : ");
@@ -129,9 +122,6 @@ int main(void) {
 		// Heart beat
 		heartBeat();
 
-		// Boucle infinie pour le fonctionnement.
-		loop();
-
 #ifdef DEBUG_MODE
 		if (Serial.available()) {
 			int cmdSerial = Serial.read();
@@ -141,23 +131,6 @@ int main(void) {
 			}
 		}
 #endif
-	}
-}
-
-/*
- * Méthode appelé encore et encore, tant que la carte reste alimenté.
- */
-void loop() {
-	// Gestion des commande ne devant rien renvoyé.
-	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle est traité ici.
-	if (i2cCommand == CMD_RESET) {
-		switch (i2cCommand) {
-			case CMD_RESET:
-				resetEncodeursValues();
-				break;
-		}
-
-		i2cCommand = 0; // reset de la commande
 	}
 }
 
@@ -193,34 +166,8 @@ void chbRead() {
 	}
 }
 
-// Fonction de gestion de la réception des commandes I2C
-//
-// /!\ Si ça merde optimiser ça avec une lecture hors du sous prog d'intérruption
-//
-void i2cReceive(int howMany) {
-	while (Wire.available()) {
-		// Lecture de la commande
-		i2cCommand = Wire.read();
-	}
-}
-
-// Fonction de traitement des envois au maitre.
-// La commande est setter avant par le maitre.
 void i2cRequest() {
-
-	// Si le maitre fait une demande d'info, c'est fait ici.
-	switch (i2cCommand) {
-		case CMD_LECTURE :
-			// Envoi de la valeur sur 2 octets (int sur 2 byte en AVR 8bits)
-			sendEncodeursValues();
-			break;
-		case CMD_VERSION :
-			// Envoi de la version sur un octet
-			Wire.write((char) VERSION);
-			break;
-	}
-
-	i2cCommand = 0; // Reset de la commande
+	sendEncodeursValues();
 }
 
 // ------------------------------------------------------- //
