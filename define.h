@@ -20,7 +20,7 @@
 #define MULT_MODE_1X	1
 #define MULT_MODE_2X	2
 #define MULT_MODE_4X	4
-#define MULT_MODE_SEL	MULT_MODE_1X
+#define MULT_MODE_SEL	MULT_MODE_4X
 
 // Addresse de base sur le bus I2C
 #define BASE_ADD_I2C 	0xB0
@@ -40,19 +40,17 @@
 #define EXT_INT_CHA		0 // EXT Int 0
 #define EXT_INT_CHB		1 // EXT Int 1
 
-// Action depuis le bus I2C
+#ifdef DEBUG_MODE
+// Action depuis la liasison série
 #define CMD_RESET		'r'
 #define CMD_LECTURE		'l'
-#define CMD_VERSION		'v'
 
-// Structures pour la gestion des encodeurs
-typedef struct {
-	signed int nbEncochesRealA;
-	signed int nbEncochesRealB;
-} EncodeursValues;
+#endif
 
-extern volatile EncodeursValues encodeurs;
+// Stockage de la valeurs des pulses compté
+extern volatile signed int nbEncoches;
 
+// Pour la configuration de l'invertion des valeurs
 boolean invert;
 
 #endif /* DEFINE_H_ */

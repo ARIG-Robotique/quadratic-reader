@@ -5,13 +5,11 @@
 
 // Prototype des fonctions
 void setup();
-void loop();
 void resetEncodeursValues();
 void sendEncodeursValues();
 void heartBeat();
 
 // Fonction d'IRQ
-void i2cReceive(int);
 void i2cRequest();
 void chaRead();
 void chbRead();
@@ -20,13 +18,7 @@ void chbRead();
 byte values[2];
 
 // Compteurs pour l'encodeur
-volatile EncodeursValues encodeurs;
-
-// Booleen permettent de gérer la séquence des variables lors de l'envoi par I2C
-volatile bool commut;
-
-// Command reçu par l'I2C
-volatile char i2cCommand;
+volatile signed int nbEncoches;
 
 // Heartbeat variables
 int heartTimePrec;
@@ -93,9 +85,7 @@ void setup() {
 	int valAdd1 = (analogRead(ADD1) > 512) ? HIGH : LOW;
 	int i2cAddress = BASE_ADD_I2C + (valAdd1 << 1);
 
-	i2cCommand = 0;
 	Wire.begin(i2cAddress);
-	Wire.onReceive(i2cReceive);
 	Wire.onRequest(i2cRequest);
 #ifdef DEBUG_MODE
 	Serial.print(" - I2C [OK] (Addresse : ");
@@ -132,25 +122,15 @@ int main(void) {
 		// Heart beat
 		heartBeat();
 
-		// Boucle infinie pour le fonctionnement.
-		loop();
-	}
-}
-
-/*
- * Méthode appelé encore et encore, tant que la carte reste alimenté.
- */
-void loop() {
-	// Gestion des commande ne devant rien renvoyé.
-	// /!\ Etre exhaustif sur les commandes car sinon le request ne pourra pas fonctionné si elle est traité ici.
-	if (i2cCommand == CMD_RESET) {
-		switch (i2cCommand) {
-			case CMD_RESET:
-				resetEncodeursValues();
-				break;
+#ifdef DEBUG_MODE
+		if (Serial.available()) {
+			int cmdSerial = Serial.read();
+			switch (cmdSerial) {
+			case CMD_RESET : resetEncodeursValues();break;
+			case CMD_LECTURE : sendEncodeursValues();break;
+			}
 		}
-
-		i2cCommand = 0; // reset de la commande
+#endif
 	}
 }
 
@@ -165,18 +145,10 @@ void chaRead() {
 
 	if (valA == HIGH) {
 		// Front montant de CHA
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valB == LOW) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valB == LOW) ? 1 : -1;
-		}
+		nbEncoches += (valB == LOW) ? 1 : -1;
 	} else {
 		// Front descendant de CHA
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valB == HIGH) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valB == HIGH) ? 1 : -1;
-		}
+		nbEncoches += (valB == HIGH) ? 1 : -1;
 	}
 }
 
@@ -187,49 +159,15 @@ void chbRead() {
 
 	if (valB == HIGH) {
 		// Front montant de CHB
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valA == HIGH) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valA == HIGH) ? 1 : -1;
-		}
+		nbEncoches += (valA == HIGH) ? 1 : -1;
 	} else {
 		// Front descendant de CHB
-		if (!commut) {
-			encodeurs.nbEncochesRealA += (valA == LOW) ? 1 : -1;
-		} else {
-			encodeurs.nbEncochesRealB += (valA == LOW) ? 1 : -1;
-		}
+		nbEncoches += (valA == LOW) ? 1 : -1;
 	}
 }
 
-// Fonction de gestion de la réception des commandes I2C
-//
-// /!\ Si ça merde optimiser ça avec une lecture hors du sous prog d'intérruption
-//
-void i2cReceive(int howMany) {
-	while (Wire.available()) {
-		// Lecture de la commande
-		i2cCommand = Wire.read();
-	}
-}
-
-// Fonction de traitement des envois au maitre.
-// La commande est setter avant par le maitre.
 void i2cRequest() {
-
-	// Si le maitre fait une demande d'info, c'est fait ici.
-	switch (i2cCommand) {
-		case CMD_LECTURE :
-			// Envoi de la valeur sur 2 octets (int sur 2 byte en AVR 8bits)
-			sendEncodeursValues();
-			break;
-		case CMD_VERSION :
-			// Envoi de la version sur un octet
-			Wire.write((char) VERSION);
-			break;
-	}
-
-	i2cCommand = 0; // Reset de la commande
+	sendEncodeursValues();
 }
 
 // ------------------------------------------------------- //
@@ -250,9 +188,7 @@ void heartBeat() {
 
 // Réinitialisation des valeurs de comptage
 void resetEncodeursValues() {
-	commut = false;
-	encodeurs.nbEncochesRealA = 0;
-	encodeurs.nbEncochesRealB = 0;
+	nbEncoches = 0;
 
 #ifdef DEBUG_MODE
 	Serial.println("Initialisation des valeurs codeurs a 0.");
@@ -262,15 +198,8 @@ void resetEncodeursValues() {
 // Gestion de l'envoi des valeurs de comptage.
 // Gère également un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
 void sendEncodeursValues() {
-	signed int value;
-	if (commut) {
-		value = encodeurs.nbEncochesRealB;
-		encodeurs.nbEncochesRealB = 0;
-	} else {
-		value = encodeurs.nbEncochesRealA;
-		encodeurs.nbEncochesRealA = 0;
-	}
-	commut = !commut;
+	signed int value = nbEncoches;
+	nbEncoches = 0;
 
 	// Application du coëficient si configuré
 	if (invert) {
