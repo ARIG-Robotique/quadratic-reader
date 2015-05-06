@@ -47,6 +47,7 @@
 								<option id="de.innot.avreclipse.cppcompiler.option.def.353183759" name="Define Syms (-D)" superClass="de.innot.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__ARDUINO_8ANA=1"/>
 								</option>
+								<option id="de.innot.avreclipse.cppcompiler.option.std.1056628738" superClass="de.innot.avreclipse.cppcompiler.option.std" value="de.innot.avreclipse.cppcompiler.option.std.gnucpp98" valueType="enumerated"/>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.107282071" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1557981853" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release"/>
