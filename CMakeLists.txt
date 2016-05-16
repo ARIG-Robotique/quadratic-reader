@@ -22,9 +22,6 @@ set(ARDUINO_DEFAULT_PORT /dev/ttyUSB0) # Default Port, when not specified
 # Ajout des libs Arduino
 link_directories(${ARDUINO_SDK_PATH}/libraries)
 
-# La lib Wire contient des sources dans des sous répertoires.
-set(Wire_RECURSE True)
-
 # Génération du programme par défaut
 generate_arduino_firmware(quadNano
     SRCS src/main.cpp
