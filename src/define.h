@@ -10,9 +10,6 @@
 
 #define VERSION			1
 
-// Mode debug
-//#define DEBUG_MODE
-
 // Definition du mode de comptage
 // 1 : CHA front montant
 // 2 : CHA et CHB front montant
