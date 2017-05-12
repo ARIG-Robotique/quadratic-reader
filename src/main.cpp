@@ -73,8 +73,10 @@ void setup() {
 
 #ifdef DEBUG_MODE
 	Serial.print(" - External INT [OK] (Mode : ");
-	Serial.print(externalIntType, DEC);
-	Serial.print(" ; CHB : ");
+	Serial.print(MULT_MODE_SEL, DEC);
+	Serial.print("x ; Type : ");
+    Serial.print(externalIntType == CHANGE ? "CHANGE" : "RISING");
+    Serial.print(" ; CHB : ");
 	Serial.print(withChb);
 	Serial.println(")");
 #endif
