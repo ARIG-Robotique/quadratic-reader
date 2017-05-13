@@ -9,5 +9,5 @@ generate_arduino_firmware(QuadraticNano
     SRCS src/main.cpp
     HDRS src/define.h
     BOARD nano328
-    #PORT /dev/ttyUSB0
+    PORT /dev/ttyUSB0
 )
