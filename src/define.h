@@ -10,9 +10,6 @@
 
 #define VERSION			1
 
-// Mode debug
-//#define DEBUG_MODE
-
 // Definition du mode de comptage
 // 1 : CHA front montant
 // 2 : CHA et CHB front montant
@@ -29,7 +26,7 @@
 #define ADD1			A7 // Analog 7
 
 // Bit permettant d'indiquer que le sens de comptage est inversé
-#define INVERT			A6 // Analog 6
+#define INVERT    A6 // Analog 6
 
 // Broche permettant de récupérer les informations du codeurs
 #define CHA				2 // Digital 2
@@ -42,7 +39,7 @@
 
 #ifdef DEBUG_MODE
 // Action depuis la liasison série
-#define CMD_RESET		'r'
+#define CMD_RESET		  'r'
 #define CMD_LECTURE		'l'
 
 #endif
