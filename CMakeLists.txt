@@ -13,8 +13,8 @@ generate_arduino_firmware(QuadraticNano1
 )
 
 generate_arduino_firmware(QuadraticNano2
-        SRCS src/main.cpp
-        HDRS src/define.h
-        BOARD nano328
-        PORT /dev/ttyUSB1
+    SRCS src/main.cpp
+    HDRS src/define.h
+    BOARD nano328
+    PORT /dev/ttyUSB1
 )
