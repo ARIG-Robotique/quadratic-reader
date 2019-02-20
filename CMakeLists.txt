@@ -22,7 +22,7 @@ set(ARDUINO_CXX_FLAGS    "-std=c++11")
 #  Setup Project                                                     #
 #====================================================================#
 
-project(QuadradicReader)
+project(QuadradicReader C CXX ASM)
 
 # Récupération de la board
 get_board_id(board_id nano atmega328)
