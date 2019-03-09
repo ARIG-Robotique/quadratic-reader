@@ -6,13 +6,11 @@
 # Contrôle de la version minimale de CMake
 cmake_minimum_required(VERSION 3.8.2)
 
-# Pas d'upload par défaut
-if (NOT DEFINED ARDUINO_UPLOAD)
-  set(ARDUINO_UPLOAD false)
-endif()
-
 # Définition de la tool chain de build
-set(CMAKE_TOOLCHAIN_FILE ../arduino-cmake-ng/cmake/Arduino-Toolchain.cmake)
+set(CMAKE_TOOLCHAIN_FILE ./cmake/Arduino-Toolchain.cmake)
+
+# Fix bug in avrdude.conf included in ArduinoSDK
+set(ARDUINO_CMAKE_AVRDUDE_CONFIG_PATH /etc/avrdude/avrdude.conf)
 
 # Compilateur flags
 #set(ARDUINO_C_FLAGS      "-ffunction-sections -fdata-sections")
@@ -21,25 +19,24 @@ set(CMAKE_TOOLCHAIN_FILE ../arduino-cmake-ng/cmake/Arduino-Toolchain.cmake)
 
 set(ARDUINO_CXX_FLAGS    "-std=c++11")
 
-#add_definitions(-DDEBUG_MODE)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    message(STATUS "Debug mode ON")
+    add_definitions(-DDEBUG_MODE)
+endif()
 
 #====================================================================#
 #  Setup Project                                                     #
 #====================================================================#
 
-project(QuadradicReader C CXX ASM)
-
-# Récupération de la board
-get_board_id(board_id nano atmega328)
+project(QuadraticReader C CXX ASM)
+arduino_cmake_project(QuadraticReader BOARD_NAME nano BOARD_CPU atmega328)
 
 # Build
-add_arduino_executable(QuadradicReader ${board_id} src/main.cpp src/define.h)
-link_platform_library(QuadradicReader Wire ${board_id})
+add_arduino_executable(QuadraticReader src/main.cpp src/define.h)
+
+# Wire lib
+find_arduino_library(wire Wire)
+link_arduino_library(QuadraticReader wire)
 
 # Upload
-if (ARDUINO_UPLOAD)
-    message("-- Upload enabled")
-    upload_arduino_target(QuadradicReader "${board_id}" /dev/ttyUSB0)
-else()
-    message("-- Upload disabled")
-endif()
+set_target_upload_port(QuadraticReader /dev/ttyUSB0)

@@ -45,14 +45,14 @@ before_install:
   - git clone https://github.com/arduino-cmake/Arduino-CMake-NG.git arduino-cmake-ng
 
 install:
-  - cd "$TRAVIS_BUILD_DIR"
+  - cd "${TRAVIS_BUILD_DIR}"
   - mkdir build
   - rm -rf build/*
   - cd build/
 
 script:
   - cmake ..
-  - make
+  - cmake --build .
 
 after_failure:
   - cat CMakeFiles/CMakeOutput.log

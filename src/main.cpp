@@ -100,6 +100,10 @@ void setup() {
 	Serial.print(" - Invertion [OK] (Actif : ");
 	Serial.print(invert);
 	Serial.println(")");
+
+	Serial.println(" -------------------- ");
+	Serial.println(" r : Reset valeur codeur a 0 ");
+	Serial.println(" l : Lecture de la valeur codeur");
 #endif
 
 	// Initialisation des valeurs à 0
