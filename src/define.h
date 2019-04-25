@@ -20,13 +20,13 @@
 #define MULT_MODE_SEL	MULT_MODE_4X
 
 // Addresse de base sur le bus I2C
-#define BASE_ADD_I2C 	0xB0
+#define BASE_ADD_I2C 	0xB4
 
 // Bit permettant de déterminer la partie variable de l'adresse I2C
 #define ADD1			A7 // Analog 7
 
 // Bit permettant d'indiquer que le sens de comptage est inversé
-#define INVERT    A6 // Analog 6
+#define INVERT          A6 // Analog 6
 
 // Broche permettant de récupérer les informations du codeurs
 #define CHA				2 // Digital 2
