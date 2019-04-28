@@ -216,7 +216,11 @@ void sendEncodeursValues() {
 	Serial.print(" * Valeur codeur (invert : ");
 	Serial.print(invert, HEX);
 	Serial.print(") : ");
-	Serial.println(value, DEC);
+	Serial.print(value, DEC);
+    Serial.print(" - Hex : 0x");
+    Serial.print(value, HEX);
+    Serial.print(" - Bin : 0b");
+	Serial.println(value, BIN);
 #endif
 
 	// Envoi de la valeur sur 2 octets
