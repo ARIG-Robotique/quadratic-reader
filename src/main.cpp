@@ -227,8 +227,8 @@ void sendEncodeursValues() {
 	//
 	// /!\ Envoi du MSB au LSB car la lecture décale a gauche
 	values[0] = (value >> 24) & 0xFF;
-    values[1] = (value >> 16) & 0xFF;
-    values[2] = (value >> 8) & 0xFF;
+    values[1] = (value >> 24) & 0xFF;
+    values[2] = (value >> 24) & 0xFF;
 	values[3] = value & 0xFF;
 	Wire.write(values, 4);
 }
