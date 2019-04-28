@@ -15,7 +15,7 @@ void chaRead();
 void chbRead();
 
 // Buffer d'envoi des valeur codeurs
-byte values[4];
+byte values[2];
 
 // Compteurs pour l'encodeur
 volatile signed long nbEncoches;
