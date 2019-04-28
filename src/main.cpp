@@ -18,7 +18,7 @@ void chbRead();
 byte values[2];
 
 // Compteurs pour l'encodeur
-volatile signed int nbEncoches;
+volatile signed long nbEncoches;
 
 // Heartbeat variables
 int heartTimePrec;
@@ -204,7 +204,7 @@ void resetEncodeursValues() {
 // Gestion de l'envoi des valeurs de comptage.
 // Gère également un roulement sur le compteur pour ne pas perdre de valeur lors de l'envoi
 void sendEncodeursValues() {
-	signed int value = nbEncoches;
+	signed long value = nbEncoches;
 	nbEncoches = 0;
 
 	// Application du coëficient si configuré
@@ -223,10 +223,12 @@ void sendEncodeursValues() {
 	Serial.println(value, BIN);
 #endif
 
-	// Envoi de la valeur sur 2 octets
+	// Envoi de la valeur sur 4 octets
 	//
 	// /!\ Envoi du MSB au LSB car la lecture décale a gauche
-	values[0] = value >> 8;
-	values[1] = value & 0xFF;
-	Wire.write(values, 2);
+	values[0] = (value >> 24) & 0xFF;
+    values[1] = (value >> 24) & 0xFF;
+    values[2] = (value >> 24) & 0xFF;
+	values[3] = value & 0xFF;
+	Wire.write(values, 4);
 }
