@@ -45,7 +45,7 @@
 #endif
 
 // Stockage de la valeurs des pulses compté
-extern volatile signed long nbEncoches;
+extern volatile signed int nbEncoches;
 
 // Pour la configuration de l'invertion des valeurs
 boolean invert;
