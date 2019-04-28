@@ -33,7 +33,7 @@ endif()
 #====================================================================#
 
 project(QuadraticReader C CXX ASM)
-arduino_cmake_project(QuadraticReader BOARD_NAME nano BOARD_CPU atmega328)
+arduino_cmake_project(QuadraticReader BOARD_NAME nano BOARD_CPU atmega328old)
 
 # Build
 add_arduino_executable(QuadraticReader src/main.cpp src/define.h)
