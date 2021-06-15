@@ -80,8 +80,8 @@ void setup() {
   Serial.print(" - External INT [OK] (Mode : ");
   Serial.print(MULT_MODE_SEL, DEC);
   Serial.print("x ; Type : ");
-    Serial.print(externalIntType == CHANGE ? "CHANGE" : "RISING");
-    Serial.print(" ; CHB : ");
+  Serial.print(externalIntType == CHANGE ? "CHANGE" : "RISING");
+  Serial.print(" ; CHB : ");
   Serial.print(withChb);
   Serial.println(")");
 #endif
@@ -137,8 +137,12 @@ int main(void) {
     if (Serial.available()) {
       int cmdSerial = Serial.read();
       switch (cmdSerial) {
-      case CMD_RESET : resetEncodeursValues();break;
-      case CMD_LECTURE : sendEncodeursValues();break;
+        case CMD_RESET :
+          resetEncodeursValues();
+          break;
+        case CMD_LECTURE :
+          sendEncodeursValues();
+          break;
       }
     }
 #endif
@@ -202,7 +206,7 @@ void resetEncodeursValues() {
   nbEncoches = 0;
 
 #ifdef DEBUG_MODE
-  Serial.println("Initialisation des valeurs codeurs a 0.");
+  Serial.println("Initialisation de la valeur codeur a 0.");
 #endif
 }
 
