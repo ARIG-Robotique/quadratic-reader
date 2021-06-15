@@ -26,6 +26,9 @@ endif()
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "Debug mode ON")
     add_definitions(-DDEBUG_MODE)
+else()
+    message(STATUS "Debug mode OFF")
+    message(STATUS "Release mode ON")
 endif()
 
 #====================================================================#
